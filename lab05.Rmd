@@ -2,7 +2,7 @@
 title: "lab05"
 author: "Dylan Scoble"
 date: "2/17/2022"
-output: html_document
+output: pdf_document
 ---
 
 The Github repository for this assignment is https://github.com/dscoble/lab05
@@ -117,5 +117,56 @@ The confidence interval of neigh_simpCity of Santa Cruz shows that in a repeated
 ### Exercise 10
 
 The intercept of this model represents data for the city of Capitola. For example, the coefficient of the intercept represents the mean price of three nights in Capitola. The rest of the model's coefficients and confidence intervals are all dependent on the intercept, which makes the intercept meaningful.
+
+### Exercise 11
+
+For this exercise, we are considering a rental in Scotts Valley. Scotts Valley is not represented in our original model because we used the neigh_simp variable instead of the neighbourhood variable. A new model is created below.
+
+```{r}
+model2 <- lm(price_3_nights ~ neighbourhood + number_of_reviews + reviews_per_month, data = airbnb)
+
+tidy(model2, conf.int = TRUE) %>%
+  kable(format = "markdown", digits = 3)
+```
+
+This model allows us to calculate that a rental in Scotts Valley that has 10 reviews and 5.14 reviews per month will have a three-night price of:
+
+  estimate = intercept_estimate + scotts_valley_estimate + (10 * number_of_reviews_estimate) + (5.14 * reviews_per_month_estimate)
+  estimate = 1474.992 - 696.147	- 4.36 - 437.064 = $337.42
+  
+and a confidence interval between:
+
+  conf_int_low = intercept_ci_low + scotts_valley_ci_low + (10 * number_of_reviews_ci_low) + (5.14 * reviews_per_month_ci_low)
+  conf_int_low = 1347.082 - 1090.486 - 8.34 - 564.012 = -$315.76
+  
+  and
+
+  conf_int_high = intercept_ci_high + scotts_valley_ci_high + (10 * number_of_reviews_ci_high) +     (5.14 * reviews_per_month_ci_high)
+  conf_int_high = 1602.902 - 301.808 - 0.39 - 310.122 = $990.58
+
+### Exercise 12
+
+The assumptions we check will require the use of the model's fitted values and residulas. The following code retrieves this data.
+```{r}
+resid <- model$residuals
+fitted <- model$fitted.values
+```
+
+The linearity assumption is satisfied because there is a linear relationship between the all of the predictor variables and the response variable.
+
+
+
+The plot below allows us to reject our assumption of constant variance. The relationship between th model's residulas and its fitted values obviously fans to the right. Because there is no "cloud pattern", the constant variance assumption is not satisfied.
+```{r}
+plot(fitted, resid)
+abline(h=0, col="red")
+```
+
+
+The plot below helps us verify that the normality assumption is satisfied. Despite a few outliers, the histogram of the model's residual values follows a relatively normal distribution, showing that the normality assumption is satisfied.
+```{r}
+hist(resid)
+```
+
 
 
